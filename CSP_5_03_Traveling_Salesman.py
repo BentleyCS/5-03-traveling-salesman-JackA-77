@@ -7,31 +7,48 @@ import itertools
 def getPathDistance(places : list):
     #Given a list of x,y coordinates return the distance it would take to go to each coordinate
     # in order and then back to the start.
-    dist = 0
-    return dist
+    distance = 0
+    for i in range(len(places) - 1):
+        distance += getDistance(places[i], places[i+1])
+    distance += getDistance(places[0], places[-1])
+    return(distance)
 
+# print(getPathDistance([(1,1), (10,10), (20,20)]))
 
 def full_TSP(places : list):
-    #Check the distance of all possible different paths one could take over a set of x,y coordiantes
-    #and return the path with the shotest distance
+    #Check the distance of all possible different paths one could take over a set of x,y coordinates
+    #and return the path with the shortest distance
     #Print out the number of distance calculations you had to do.
-
     bestRoute = []
     calculations = 0
-
+    perms = generatePermutations(places)
+    for path in perms:
+        bestRoute.append([getPathDistance(path),path])
+        calculations += len(path)
     print(f"there were {calculations} calculations for full TSP")
-    return bestRoute
+    print(min(bestRoute)[0])
+    return min(bestRoute)[1]
 
 def hueristic_TSP(places : list):
-    #Perform a hueristic calculation for traveling salesman.
-    #For each node find the closest node to it and assume it is next node then repeat until you have your path.
-    #Return the path. andprint out the number of distance calculations you did.
+    #Perform a heuristic calculation for traveling salesman.
+    #For each node, find the closest node to it and assume it is next node, then repeat until you have your path.
+    #Return the path and print out the number of distance calculations you did.
 
-
+    bestRoute = []
+    newList = places.copy()
     calculations = 0
+    for i in range(len(places)-1):
+        findBest = []
+        newList.remove(places[i])
+        for j in range(len(newList)):
+            findBest.append([getDistance(places[i], newList[j]),i,j])
+            print(findBest)
+            calculations += 1
+        bestRoute.append(min(findBest)[1])
+        bestRoute.append(min(findBest)[2])
+    print(f"there were {calculations} calculations for heuristic TSP")
+    return bestRoute
 
-    print(f"there were {calculations} calculations for hueristic TSP")
-    return []
 
 def generatePermutations(places : list):
     # a function that given a list will return all possible permutations of the list.
@@ -51,7 +68,7 @@ def generate_RandomCoordinates(n):
         newPlaces.append([random.randint(10,790),random.randint(10,590)])
     return newPlaces
 
-places = [[80,75],[100,520],[530,300],[280,200],[350,150],[700,120],[400,500]]
+# places = [[80,75],[100,520],[530,300],[280,200],[350,150],[700,120],[400,500]]
 
 
 def DrawExample(places):
@@ -92,6 +109,6 @@ def DrawExample(places):
         pygame.display.flip()
     # Quit Pygame
 
-DrawExample(places)
-#DrawExample(generate_RandomCoordinates(5))# DO NOT run more than 9 or 10
-pygame.quit()
+# DrawExample(places)
+# DrawExample(generate_RandomCoordinates(5))# DO NOT run more than 9 or 10
+# pygame.quit()
